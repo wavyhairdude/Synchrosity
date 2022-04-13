@@ -1,0 +1,29 @@
+import java.util.*;
+
+
+class Node
+{
+	Node next;
+	int val;
+	boolean marked;
+}
+
+class List
+{
+	Node start, end;
+	
+	List()
+	{
+		this.start = null; this.end = null;
+	}
+}
+
+public class Present
+{
+	
+	
+	public static void main(String[] args)
+	{
+		;
+	}
+}
