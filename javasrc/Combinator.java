@@ -6,6 +6,7 @@ public class Combinator {
         Sensor b = new Sensor();
 
         a.main(new String[0]);
+        System.out.println();
         b.main(new String[0]);
     }
 }

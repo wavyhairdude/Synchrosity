@@ -68,6 +68,7 @@ class List
 		Node n = new Node(x);
 		Node curr = xy[0], prev = xy[1];
 		n.next = new AtomicMarkableReference<Node>(curr, false);
+		// end of list, just place
 		if (curr == null)
 		{
 			prev.next = new AtomicMarkableReference<Node>(n, false);
@@ -139,7 +140,7 @@ public class Present extends Thread
 {
 	static AtomicIntegerArray bag;
 	static AtomicInteger p;
-	static int NUM_PRESENTS = 100;
+	static int NUM_PRESENTS = 500_000;
 	static int NUM_THREADS = 4;
 	static List chain;
 	
