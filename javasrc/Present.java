@@ -24,12 +24,14 @@ class List
 		boolean snip;
 		boolean[] marked = new boolean[1];
 		
+		// keep going until add is succesful
 		while (true)
 		{
 			prev = this.start;
 			curr = prev.next.getReference();
 			while (true)
 			{
+				// courrect spot found, return
 				if (curr == null)
 				{
 					t[0] = curr;
@@ -41,13 +43,14 @@ class List
 				while (marked[0])
 				{
 					snip = prev.next.compareAndSet(curr, following, false, false);
-					// if failed to cut, retry
+					// if failed to remove, retry
 					if (!snip)	return getLoc(x);
 
 					curr = following;
 					following = curr.next.get(marked);
 				}
 
+				// found correct value, return
 				if (curr.val > x)
 				{
 					t[0] = curr;
@@ -95,11 +98,8 @@ class List
 		if (curr == null)
 			return false;
 
-		// only update if the values stayed the same
+		// only update if the values stayed the same otherwise, failed remove
 		return prev.next.compareAndSet(curr, curr.next.getReference(), false, false);
-
-		//prev.next = curr.next;
-		//return true;
 	}
 
 	/// check if we have a value without locking. and use marking to see if node is contained
@@ -125,6 +125,7 @@ class List
 	public void showList()
 	{
 		Node t = this.start;
+		// ignore the firsst sentinel, traverse list and print
 		while (t != null)
 		{
 			System.out.println(t.val);
@@ -179,11 +180,21 @@ public class Present extends Thread
 
 		while (true)
 		{
+			// chance of minatour searching for a present
+			if (Math.random() > .9)
+			{
+				Present.chain.hasValue( (int)(Math.random() *Present.NUM_PRESENTS) );
+				continue;
+			}
+
 			alternate = !alternate;
 
+			// alternate between adding and removing with boolean
 			if ( alternate )
 			{
+				// atomically get the random value
 				z = Present.p.getAndIncrement();
+				// if all are added, continue removing until chain is empty
 				if (z >= NUM_PRESENTS)
 					if (Present.chain.start.next.getReference() == null)
 						return;
