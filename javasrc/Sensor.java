@@ -70,7 +70,7 @@ class Queue
 
     /// add node at correct position, if posssible, otherwise ignore
     /// if adding a node, remove the next lowest
-    public boolean addNode(int temp)
+    public synchronized boolean addNode(int temp)
     {
         Node n = new Node(temp);
 
@@ -86,7 +86,7 @@ class Queue
             n.next = new AtomicMarkableReference<Node>(curr, false);
             if (prev.next.compareAndSet(curr, n, false, false))
             {
-                removeFirst();
+                this.start = this.start.next.getReference();
                 return true;
             }
         }
@@ -95,6 +95,7 @@ class Queue
     /// simply print the queue in the order it is placed
     public void printQ(boolean reverse)
     {
+
         Node c = this.start.next.getReference();
         while (c != null)
         {
@@ -118,18 +119,25 @@ class Queue
         return (reversed? -1: 1) * z;
     }
 
+    
+
     /// remove the first element in the list
-    public void removeFirst()
+    public synchronized void removeFirst()
     {
+        //Node prev = this.start, curr = prev.next.getReference();
+
+		// only update if the values stayed the same otherwise, failed remove
+		//prev.next.compareAndSet(curr, curr.next.getReference(), false, false);
         this.start = this.start.next.getReference();
     }
+
 }
 
 
 public class Sensor extends Thread
 {
     static Queue inc, dec;
-    static int numSensors = 1;
+    static int numSensors = 8;
     static int INTERVAL = 10;
     static boolean DEBUG = false;
     static boolean PRINT_REPORTS = false;
@@ -182,6 +190,7 @@ public class Sensor extends Thread
                 try {pool[i].join();} catch (Exception e) {;}
 
             // check if this is the instance where the diff is the greatest
+            //int diff = 0;
             int diff = Math.abs(inc.getTail(false) - dec.getTail(true));
             if (diff > maxDiff)
             {
